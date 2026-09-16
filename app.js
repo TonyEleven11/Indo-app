@@ -364,6 +364,7 @@ const screens = {
   home: document.getElementById("screen-home"),
   study: document.getElementById("screen-study"),
   browse: document.getElementById("screen-browse"),
+  suggestions: document.getElementById("screen-suggestions"),
   settings: document.getElementById("screen-settings"),
 };
 
@@ -377,6 +378,7 @@ function showScreen(name) {
   });
   if (name === "home") renderHome();
   if (name === "browse") renderBrowse();
+  if (name === "suggestions") renderSuggestions();
   if (name === "settings") renderSettings();
 }
 
@@ -818,6 +820,83 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// ---- Suggestions (curated phrase bank Tony picks from, at his own pace) ----
+//
+// SUGGESTED_PHRASES comes from suggestions-data.js. Each entry has its own stable bank id (so it
+// can be found again when its "+" is tapped), separate from the real phrase ids addPhrase()
+// generates. "Already added" is determined by matching id_text against the user's own phrases
+// (normalized/trimmed/lowercased) rather than tracked separately — so if a phrase is later
+// deleted from the main deck, it naturally becomes available to add again from the bank, which
+// seems like the right behavior rather than a bug to guard against.
+
+function getAddedPhraseTextSet() {
+  return new Set(phrases.map((p) => p.id_text.trim().toLowerCase()));
+}
+
+function getFilteredGroupedSuggestions(filterText) {
+  const search = (filterText || document.getElementById("suggestions-search").value || "").trim().toLowerCase();
+  const hideAdded = document.getElementById("suggestions-hide-added").checked;
+  const addedSet = getAddedPhraseTextSet();
+  const cats = {};
+  SUGGESTED_PHRASES.forEach((s) => {
+    if (search && !s.id_text.toLowerCase().includes(search) && !s.en.toLowerCase().includes(search)) return;
+    const isAdded = addedSet.has(s.id_text.trim().toLowerCase());
+    if (hideAdded && isAdded) return;
+    if (!cats[s.cat]) cats[s.cat] = [];
+    cats[s.cat].push(s);
+  });
+  return cats;
+}
+
+function renderSuggestions() {
+  const container = document.getElementById("suggestions-list");
+  container.innerHTML = "";
+  const hideAdded = document.getElementById("suggestions-hide-added").checked;
+  const cats = getFilteredGroupedSuggestions();
+  const addedSet = getAddedPhraseTextSet();
+
+  const orderedCats = SUGGESTION_CATEGORY_ORDER.filter((c) => cats[c]).concat(
+    Object.keys(cats).filter((c) => !SUGGESTION_CATEGORY_ORDER.includes(c))
+  );
+
+  orderedCats.forEach((cat) => {
+    const h = document.createElement("h3");
+    h.className = "browse-cat";
+    h.textContent = cat;
+    container.appendChild(h);
+    cats[cat].forEach((s) => {
+      const isAdded = addedSet.has(s.id_text.trim().toLowerCase());
+      const row = document.createElement("div");
+      row.className = "browse-row suggestion-row";
+      row.innerHTML = `
+        <div class="browse-text">
+          <div class="browse-id">${escapeHtml(s.id_text)}</div>
+          <div class="browse-en">${escapeHtml(s.en)}</div>
+          ${s.note ? `<div class="suggestion-note">${escapeHtml(s.note)}</div>` : ""}
+        </div>
+        <button class="suggestion-add-btn${isAdded ? " added" : ""}" data-id="${s.id}"
+          aria-label="${isAdded ? "Already added" : "Add to my deck"}">${isAdded ? "✓ Added" : "➕"}</button>`;
+      container.appendChild(row);
+    });
+  });
+
+  if (Object.keys(cats).length === 0) {
+    container.innerHTML = hideAdded
+      ? '<p class="empty">You\'ve added every phrase that matches — nice work! Uncheck the filter above to browse them again.</p>'
+      : '<p class="empty">No suggestions match your search.</p>';
+  }
+}
+
+function addSuggestedPhrase(bankId) {
+  const s = SUGGESTED_PHRASES.find((p) => p.id === bankId);
+  if (!s) return;
+  const alreadyAdded = getAddedPhraseTextSet().has(s.id_text.trim().toLowerCase());
+  if (alreadyAdded) return; // guards against a double-tap adding a duplicate entry
+  addPhrase({ cat: s.cat, id_text: s.id_text, en: s.en, note: s.note });
+  renderSuggestions();
+  renderHome();
+}
+
 // ---- Settings ----
 
 function renderSettings() {
@@ -1022,6 +1101,13 @@ function init() {
   document.getElementById("btn-save-phrase").addEventListener("click", savePhraseFromForm);
   document.getElementById("btn-cancel-phrase").addEventListener("click", closePhraseForm);
   document.getElementById("btn-delete-phrase").addEventListener("click", deletePhraseFromForm);
+
+  document.getElementById("suggestions-search").addEventListener("input", () => renderSuggestions());
+  document.getElementById("suggestions-hide-added").addEventListener("change", () => renderSuggestions());
+  document.getElementById("suggestions-list").addEventListener("click", (e) => {
+    const btn = e.target.closest(".suggestion-add-btn");
+    if (btn && !btn.classList.contains("added")) addSuggestedPhrase(btn.dataset.id);
+  });
 
   document.getElementById("btn-save-settings").addEventListener("click", () => saveSettingsFromForm(true));
   document.getElementById("btn-export-phrases").addEventListener("click", exportPhrasesBackup);

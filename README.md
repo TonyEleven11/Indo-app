@@ -4,8 +4,9 @@ A small offline-friendly flashcard app for learning practical Indonesian before 
 spaced repetition (an Anki-style algorithm: cards you find easy show up less often, cards you
 struggle with come back sooner).
 
-- Starts completely empty — you type in every word and phrase yourself, in the Browse tab. There's no
-  built-in starter deck; the app is a blank flashcard box that's entirely yours.
+- Starts completely empty — you type in every word and phrase yourself, in the Browse tab, or pick them
+  from the curated **Ideas** tab (see below). There's no forced starter deck; the app is a blank
+  flashcard box that's entirely yours to fill, at whatever pace you like.
 - Installable as a home-screen app (PWA) and fully usable with no internet connection once installed —
   built for using it in Indonesia without data.
 - Everything — your phrases and your review progress — is stored only in your phone's local storage
@@ -24,6 +25,24 @@ Open the **Browse** tab and tap **+ Add phrase**. Each entry has:
 
 Tap the ✏️ on any row in Browse to edit or delete it. Editing keeps its review history; deleting removes
 it for good, including its schedule.
+
+## The Ideas tab — a phrase bank to pick from
+
+The **💡 Ideas** tab has a curated bank of around 400 ready-made phrases you can add to your own deck one
+at a time, entirely at your own pace — nothing there is added automatically. It's grouped by category
+(Romantic and Funny & Playful are shown first, then Meeting Her Family, Everyday Chat with Friends,
+and the more standard travel categories: Greetings, Food, Directions, Shopping, Numbers & Time,
+Emergencies), with a search box to jump straight to something specific.
+
+Tap ➕ on any phrase to add it to your real deck — it's added exactly as if you'd typed it in yourself,
+complete with a usage note where one's useful (explaining slang like *gombal*, *baper*, or *gemas*, or
+who a phrase is meant for), and it's immediately in your Study rotation. Once added, it's marked
+**✓ Added** so you always know where you left off; tick "Hide phrases I've already added" to only see
+what's left to consider. If you delete something from Browse later, it becomes available in Ideas again.
+
+A good number of the "Meeting Her Family" and casual-friend phrases lean into everyday Jakarta speech
+(gue/lo, and particles like *sih*, *dong*, *banget*) rather than textbook-formal Indonesian, since that's
+generally how people actually talk day to day.
 
 ## Deploying to GitHub Pages
 

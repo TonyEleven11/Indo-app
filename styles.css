@@ -269,6 +269,35 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
 .learned-filter input { width: 16px; height: 16px; }
 .empty { color: var(--text-muted); text-align: center; margin-top: 30px; }
 
+.suggestion-note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 4px;
+  font-style: italic;
+}
+.suggestion-add-btn {
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+  background: var(--red);
+  color: white;
+  cursor: pointer;
+}
+.suggestion-add-btn.added {
+  background: none;
+  border: 1px solid var(--green);
+  color: var(--green);
+  border-radius: 8px;
+  width: auto;
+  padding: 0 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: default;
+}
+
 .listen-bar {
   display: flex;
   align-items: center;

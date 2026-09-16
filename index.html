@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Belajar ID" />
-<link rel="stylesheet" href="styles.css?v=8" />
+<link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
 
@@ -144,6 +144,19 @@
     <div id="browse-list" class="browse-list"></div>
   </section>
 
+  <!-- SUGGESTIONS (phrase bank to pick from, at your own pace) -->
+  <section id="screen-suggestions" class="screen">
+    <p class="hint small">A curated set of phrases to pick from — tap ➕ to add one to your own deck. Romantic
+      and funny ones are up top; add as many or as few as you like, whenever you like.</p>
+    <div class="browse-toolbar">
+      <input id="suggestions-search" class="search-box" type="search" placeholder="Search Indonesian or English…" />
+    </div>
+    <label class="learned-filter">
+      <input type="checkbox" id="suggestions-hide-added" /> Hide phrases I've already added
+    </label>
+    <div id="suggestions-list" class="browse-list"></div>
+  </section>
+
   <!-- SETTINGS -->
   <section id="screen-settings" class="screen">
     <h2>Settings</h2>
@@ -191,9 +204,11 @@
   <button class="navbtn active" data-screen="home">🏠<span>Home</span></button>
   <button class="navbtn" data-screen="study">📚<span>Study</span></button>
   <button class="navbtn" data-screen="browse">🔎<span>Browse</span></button>
+  <button class="navbtn" data-screen="suggestions">💡<span>Ideas</span></button>
   <button class="navbtn" data-screen="settings">⚙️<span>Settings</span></button>
 </nav>
 
-<script src="app.js?v=8"></script>
+<script src="suggestions-data.js?v=1"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
