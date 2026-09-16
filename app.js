@@ -578,7 +578,7 @@ function updateCategoryDatalist() {
 
 // ---- Listen (auto-play through whatever's currently visible in Browse) ----
 //
-// Plays English (normal speed), a short pause, Indonesian (slowed down), a longer pause,
+// Plays English (normal speed), a ~3s pause, Indonesian (slowed down), a shorter pause,
 // then moves to the next phrase in the same filtered/grouped order renderBrowse() shows —
 // so it always tracks the current search text and "learned only" filter. Loops back to the
 // start at the end rather than stopping, so it can run continuously while propped up.
@@ -660,7 +660,7 @@ async function runListenLoop(startToken) {
 
     await speakOnce(p.en, "en-US", 1.0);
     if (!stillCurrent()) return;
-    await delay(350);
+    await delay(3000); // give a few seconds to think before the Indonesian version plays
     if (!stillCurrent()) return;
 
     await speakOnce(p.id_text, "id-ID", 0.7);

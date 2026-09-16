@@ -94,8 +94,9 @@ your added phrases and progress are gone. If that's a concern, say the word and 
 
 In **Browse**, tap **▶️ Listen** to have the app read through the phrases currently on screen — so if
 you've searched or scrolled to a particular category, Listen plays just that set; clear the search and
-it plays everything. For each phrase it speaks the English at normal speed, a short pause, then the
-Indonesian slowed down, a longer pause, then moves to the next one, with the current phrase highlighted
+it plays everything. For each phrase it speaks the English at normal speed, pauses about 3 seconds (time
+to guess the Indonesian yourself before it tells you), then the Indonesian slowed down, a shorter pause,
+then moves to the next one, with the current phrase highlighted
 as it plays so you can follow along visually. Reaching the end loops straight back to the start rather
 than stopping, so you can prop the phone up and let it run continuously. Tap **⏭️** to skip to the next
 phrase immediately, or tap the button again (now showing **⏸️ Pause**) to stop.
