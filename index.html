@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Belajar Indonesia</title>
+<meta name="description" content="Learn practical Indonesian phrases with spaced repetition, offline." />
+<meta name="theme-color" content="#B22234" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Belajar ID" />
+<link rel="stylesheet" href="styles.css?v=6" />
+</head>
+<body>
+
+<header class="topbar">
+  <h1>🇮🇩 Belajar Indonesia</h1>
+  <p class="tagline">Practical Indonesian for your trip</p>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen active">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-due">0</div>
+        <div class="stat-label">Due for review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-new">0</div>
+        <div class="stat-label">Not started</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-learned">0</div>
+        <div class="stat-label">Learned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total phrases</div>
+      </div>
+    </div>
+
+    <button id="btn-start-study" class="btn-primary btn-large">Study now</button>
+
+    <div id="home-empty-state" class="empty-state hidden">
+      <p class="celebrate">👋 No phrases yet</p>
+      <p class="hint">This app starts empty — add the words and phrases you actually want to learn,
+        and they'll be scheduled for review automatically.</p>
+      <button id="btn-home-add-phrase" class="btn-primary">+ Add your first phrase</button>
+    </div>
+
+    <p class="hint">Cards are reviewed on a schedule so they stick — but there's no cap on how much
+      you can practice. Once you're caught up, Study just switches to a free-practice round through
+      everything, as many times a day as you want. Rate a card "Easy" five times and it moves to your
+      Learned count — you'll still get tested on it occasionally, and a single wrong answer sends it
+      back to square one.</p>
+  </section>
+
+  <!-- STUDY -->
+  <section id="screen-study" class="screen">
+    <div id="learned-toast" class="learned-toast"></div>
+    <div id="study-progress" class="study-progress"></div>
+
+    <div id="study-card" class="flashcard">
+      <div class="card-category" id="card-category"></div>
+      <div class="card-front" id="card-front"></div>
+
+      <div id="card-back" class="card-back hidden">
+        <div class="card-divider"></div>
+        <div id="card-back-text" class="card-back-text"></div>
+        <div id="card-back-note" class="card-back-note hidden"></div>
+      </div>
+
+      <button id="btn-speak" class="btn-speak" title="Play pronunciation" aria-label="Play pronunciation">🔊</button>
+
+      <div id="card-tap-hint" class="tap-hint">Tap card to reveal</div>
+    </div>
+
+    <div id="rating-buttons" class="rating-buttons hidden">
+      <button id="btn-again" class="rate-btn rate-again">Again<span class="ival"></span></button>
+      <button id="btn-hard" class="rate-btn rate-hard">Hard<span class="ival"></span></button>
+      <button id="btn-good" class="rate-btn rate-good">Good<span class="ival"></span></button>
+      <button id="btn-easy" class="rate-btn rate-easy">Easy<span class="ival"></span></button>
+    </div>
+
+    <div id="study-complete" class="study-complete hidden">
+      <p class="celebrate">🎉 Session complete!</p>
+      <p class="hint">There's no limit — jump right back in whenever you want.</p>
+      <button id="btn-study-again" class="btn-primary">Study more</button>
+    </div>
+  </section>
+
+  <!-- BROWSE / MANAGE -->
+  <section id="screen-browse" class="screen">
+    <div class="browse-toolbar">
+      <input id="browse-search" class="search-box" type="search" placeholder="Search Indonesian or English…" />
+      <button id="btn-add-phrase" class="btn-primary btn-add">+ Add phrase</button>
+    </div>
+    <label class="learned-filter">
+      <input type="checkbox" id="browse-filter-learned" /> ⭐ Show learned only
+    </label>
+
+    <div id="listen-bar" class="listen-bar hidden">
+      <button id="btn-listen-toggle" class="btn-listen" aria-label="Listen">▶️ Listen</button>
+      <button id="btn-listen-skip" class="btn-listen-skip hidden" aria-label="Skip to next">⏭️</button>
+      <span id="listen-status" class="listen-status"></span>
+    </div>
+
+    <div id="phrase-form" class="phrase-form hidden">
+      <h2 id="phrase-form-title">Add phrase</h2>
+
+      <label class="field">
+        Indonesian
+        <input type="text" id="field-id-text" placeholder="e.g. Terima kasih" />
+      </label>
+
+      <label class="field">
+        English
+        <input type="text" id="field-en-text" placeholder="e.g. Thank you" />
+      </label>
+
+      <label class="field">
+        Category
+        <input type="text" id="field-category" list="category-options" placeholder="e.g. Greetings" />
+        <datalist id="category-options"></datalist>
+      </label>
+
+      <label class="field">
+        Note <span class="optional">(optional)</span>
+        <input type="text" id="field-note" placeholder="Usage tip, context, pronunciation…" />
+      </label>
+
+      <div class="phrase-form-actions">
+        <button id="btn-save-phrase" class="btn-primary">Save</button>
+        <button id="btn-cancel-phrase" class="btn-secondary">Cancel</button>
+      </div>
+      <button id="btn-delete-phrase" class="btn-danger hidden">Delete this phrase</button>
+    </div>
+
+    <div id="browse-list" class="browse-list"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="screen-settings" class="screen">
+    <h2>Settings</h2>
+
+    <label class="field">
+      Card direction
+      <select id="setting-direction">
+        <option value="mixed">Mixed (both directions)</option>
+        <option value="id->en">Indonesian → English</option>
+        <option value="en->id">English → Indonesian</option>
+      </select>
+    </label>
+
+    <div class="field">
+      Categories to study
+      <div id="setting-categories" class="cat-checks"></div>
+      <p class="hint small">Changes apply immediately. Leave all boxes unchecked to study every category.</p>
+    </div>
+
+    <button id="btn-save-settings" class="btn-primary">Save settings</button>
+    <p id="settings-saved-note" class="save-note hidden">Saved ✓</p>
+
+    <hr class="sep" />
+
+    <button id="btn-reset-progress" class="btn-danger">Reset all progress</button>
+    <p class="hint small">This wipes your review history and starts every phrase as new again.</p>
+  </section>
+
+</main>
+
+<nav class="bottomnav">
+  <button class="navbtn active" data-screen="home">🏠<span>Home</span></button>
+  <button class="navbtn" data-screen="study">📚<span>Study</span></button>
+  <button class="navbtn" data-screen="browse">🔎<span>Browse</span></button>
+  <button class="navbtn" data-screen="settings">⚙️<span>Settings</span></button>
+</nav>
+
+<script src="app.js?v=6"></script>
+</body>
+</html>
