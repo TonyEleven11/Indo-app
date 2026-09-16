@@ -279,6 +279,7 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
   padding: 8px 10px;
   margin-bottom: 14px;
 }
+.listen-bar.hidden { display: none; }
 .btn-listen {
   flex: none;
   border: none;
@@ -300,6 +301,7 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
   cursor: pointer;
   opacity: 0.8;
 }
+.btn-listen-skip.hidden { display: none; }
 .listen-status {
   min-width: 0;
   flex: 1;
@@ -387,6 +389,14 @@ h2 { font-size: 1.1rem; margin: 4px 0 16px 0; }
   margin-top: 8px;
 }
 .save-note.hidden { display: none; }
+
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.backup-actions .btn-secondary { margin-top: 0; }
+#import-file-input { display: none; }
 
 .sep { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
 .btn-danger {

@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Belajar ID" />
-<link rel="stylesheet" href="styles.css?v=7" />
+<link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
 
@@ -168,6 +168,19 @@
 
     <hr class="sep" />
 
+    <h2>Backup &amp; restore</h2>
+    <p class="hint small">Your phrases and progress live only in this browser. Export a backup file
+      before clearing browser data, switching devices, or reinstalling the app to your home screen —
+      and import it to bring everything back.</p>
+    <div class="backup-actions">
+      <button id="btn-export-phrases" class="btn-secondary">⬇️ Export backup</button>
+      <button id="btn-import-phrases" class="btn-secondary">⬆️ Import backup</button>
+      <input type="file" id="import-file-input" accept="application/json,.json" class="hidden" />
+    </div>
+    <p id="backup-status-note" class="save-note hidden"></p>
+
+    <hr class="sep" />
+
     <button id="btn-reset-progress" class="btn-danger">Reset all progress</button>
     <p class="hint small">This wipes your review history and starts every phrase as new again.</p>
   </section>
@@ -181,6 +194,6 @@
   <button class="navbtn" data-screen="settings">⚙️<span>Settings</span></button>
 </nav>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>

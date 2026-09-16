@@ -863,6 +863,94 @@ function resetAllProgress() {
   renderHome();
 }
 
+// ---- Backup / restore ----
+//
+// Everything lives only in this browser's local storage, which updating the app's files does NOT
+// touch — but plenty of things a person naturally does around an update CAN wipe it (deleting and
+// re-adding a home-screen icon on iOS gives it a fresh, empty storage container; clearing site data
+// while troubleshooting a stale cache; switching devices; a private/incognito window). Export writes
+// everything to a JSON file the user actually controls, independent of the browser; Import reads it
+// back in. This is the real fix for "I keep losing my phrases," not a workaround.
+
+function exportPhrasesBackup() {
+  const payload = {
+    app: "belajar-indonesia",
+    exportedAt: new Date().toISOString(),
+    phrases,
+    cardStates,
+    settings,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `belajar-indonesia-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showBackupStatus(`Exported ${phrases.length} phrase${phrases.length === 1 ? "" : "s"} ✓`);
+}
+
+function importPhrasesFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try {
+      data = JSON.parse(reader.result);
+    } catch (e) {
+      alert("That doesn't look like a valid backup file.");
+      return;
+    }
+    if (!data || !Array.isArray(data.phrases)) {
+      alert("That file doesn't look like a Belajar Indonesia backup.");
+      return;
+    }
+    const count = data.phrases.length;
+    const ok = confirm(
+      `Import ${count} phrase${count === 1 ? "" : "s"} from this backup? This replaces everything ` +
+        `currently in the app (phrases, progress, and settings) — it can't be undone.`
+    );
+    if (!ok) return;
+
+    phrases = data.phrases.map((p) => ({
+      id: p.id || generatePhraseId(),
+      cat: (p.cat || "").trim() || DEFAULT_CATEGORY,
+      id_text: (p.id_text || "").trim(),
+      en: (p.en || "").trim(),
+      note: (p.note || "").trim(),
+    }));
+    savePhrases(phrases);
+    rebuildIndex();
+
+    cardStates = data.cardStates && typeof data.cardStates === "object" ? data.cardStates : {};
+    ensureAllCardsExist(); // fills in states for any phrase missing one, prunes anything orphaned
+    saveCardStates(cardStates);
+
+    if (data.settings && typeof data.settings === "object") {
+      settings = { ...DEFAULT_SETTINGS, ...data.settings };
+      saveSettings(settings);
+    }
+
+    renderHome();
+    renderBrowse();
+    renderSettings();
+    showBackupStatus(`Imported ${phrases.length} phrase${phrases.length === 1 ? "" : "s"} ✓`);
+  };
+  reader.onerror = () => alert("Couldn't read that file — please try again.");
+  reader.readAsText(file);
+}
+
+function showBackupStatus(text) {
+  const note = document.getElementById("backup-status-note");
+  if (!note) return;
+  note.textContent = text;
+  note.classList.remove("hidden");
+  clearTimeout(showBackupStatus._t);
+  showBackupStatus._t = setTimeout(() => note.classList.add("hidden"), 2500);
+}
+
 // ---------- Init ----------
 
 function init() {
@@ -936,6 +1024,15 @@ function init() {
   document.getElementById("btn-delete-phrase").addEventListener("click", deletePhraseFromForm);
 
   document.getElementById("btn-save-settings").addEventListener("click", () => saveSettingsFromForm(true));
+  document.getElementById("btn-export-phrases").addEventListener("click", exportPhrasesBackup);
+  document.getElementById("btn-import-phrases").addEventListener("click", () => {
+    document.getElementById("import-file-input").click();
+  });
+  document.getElementById("import-file-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) importPhrasesFromFile(file);
+    e.target.value = ""; // so re-importing the same filename later still fires a change event
+  });
   document.getElementById("btn-reset-progress").addEventListener("click", resetAllProgress);
   document.getElementById("setting-direction").addEventListener("change", () => saveSettingsFromForm(false));
   // Event delegation: category checkboxes are rebuilt each time renderSettings() runs,

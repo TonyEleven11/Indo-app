@@ -73,12 +73,23 @@ This happened on the Tidy Clean Organized app. Fix, in order:
    its offline cache. This only affects the *app code* — your phrases and progress live in local storage
    and are untouched by any of this.
 
-## Worth knowing: there's no backup yet
+## Backing up your phrases
 
-Because everything lives in that one browser's local storage, there's currently no way to export your
-phrase list or back it up elsewhere. If you clear Safari/Chrome site data, switch phones, or reinstall,
-your added phrases and progress are gone. If that's a concern, say the word and an export/import feature
-(e.g. to a JSON or CSV file you can keep a copy of) is a reasonable thing to add later.
+Everything still lives only in that one browser's local storage — updating the app's files (following
+the steps above) does **not** touch it, since your data is tied to the site's address, not its code.
+But plenty of ordinary things around an update *can* wipe it: deleting and re-adding the app to your
+iPhone home screen (iOS gives a re-added home-screen app a fresh, empty storage container), clearing
+Safari/Chrome site data while troubleshooting, switching phones, or browsing in a private window.
+
+To protect against that, go to **Settings → Backup & restore**:
+- **⬇️ Export backup** downloads a `.json` file with every phrase, your review progress, and your
+  settings. Do this any time you've added a bunch of new phrases, and especially before you touch
+  browser site data or reinstall the home-screen icon.
+- **⬆️ Import backup** loads a previously exported file back in, replacing whatever's currently in the
+  app. You'll get a confirmation prompt first since it can't be undone.
+
+Keep the exported file somewhere durable — email it to yourself, save it to iCloud/Drive, whatever you'd
+normally use for a document you don't want to lose.
 
 ## How the spaced repetition works, briefly
 
