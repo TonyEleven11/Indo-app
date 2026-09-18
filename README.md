@@ -28,11 +28,12 @@ it for good, including its schedule.
 
 ## The Ideas tab — a phrase bank to pick from
 
-The **💡 Ideas** tab has a curated bank of around 400 ready-made phrases you can add to your own deck one
+The **💡 Ideas** tab has a curated bank of over 400 ready-made phrases you can add to your own deck one
 at a time, entirely at your own pace — nothing there is added automatically. It's grouped by category
-(Romantic and Funny & Playful are shown first, then Meeting Her Family, Everyday Chat with Friends,
-and the more standard travel categories: Greetings, Food, Directions, Shopping, Numbers & Time,
-Emergencies), with a search box to jump straight to something specific.
+(**For Sita** — phrases picked out specifically for her — comes first, then Romantic and Funny & Playful,
+then Meeting Her Family, Everyday Chat with Friends, and the more standard travel categories: Greetings,
+Food, Directions, Shopping, Numbers & Time, Emergencies), with a search box to jump straight to something
+specific.
 
 Tap ➕ on any phrase to add it to your real deck — it's added exactly as if you'd typed it in yourself,
 complete with a usage note where one's useful (explaining slang like *gombal*, *baper*, or *gemas*, or

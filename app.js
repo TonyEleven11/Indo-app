@@ -247,6 +247,12 @@ function shuffle(arr) {
 const LEARNING_REQUEUE_STEPS = [3, 6]; // queue positions ahead per learning step
 const AGAIN_REQUEUE = 2;
 const HARD_REQUEUE = 4;
+const MAX_INTERVAL_DAYS = 3650; // ~10 years — sanity cap so repeated ratings on one card
+// (e.g. during free practice) can't compound into an astronomical, garbled interval
+
+function clampInterval(days) {
+  return Math.max(1, Math.min(MAX_INTERVAL_DAYS, Math.round(days)));
+}
 
 function requeue(cardId, positionsAhead) {
   const insertAt = Math.min(sessionQueue.length, positionsAhead);
@@ -310,18 +316,18 @@ function rateCard(cardId, rating) {
       st.lapses += 1;
       st.ef = Math.max(1.3, st.ef - 0.2);
       st.state = "relearning";
-      st.interval = Math.max(1, Math.round(st.interval * 0.5));
+      st.interval = clampInterval(st.interval * 0.5);
       requeue(cardId, AGAIN_REQUEUE);
     } else if (rating === "hard") {
       st.ef = Math.max(1.3, st.ef - 0.15);
-      st.interval = Math.max(1, Math.round(st.interval * 1.2));
+      st.interval = clampInterval(st.interval * 1.2);
       st.due = now + st.interval * DAY_MS;
     } else if (rating === "good") {
-      st.interval = Math.max(1, Math.round(st.interval * st.ef));
+      st.interval = clampInterval(st.interval * st.ef);
       st.due = now + st.interval * DAY_MS;
     } else if (rating === "easy") {
       st.ef = st.ef + 0.15;
-      st.interval = Math.max(1, Math.round(st.interval * st.ef * 1.3));
+      st.interval = clampInterval(st.interval * st.ef * 1.3);
       st.due = now + st.interval * DAY_MS;
     }
   }
@@ -331,8 +337,8 @@ function rateCard(cardId, rating) {
 
 function graduate(st, now, days) {
   st.state = "review";
-  st.interval = days;
-  st.due = now + days * DAY_MS;
+  st.interval = clampInterval(days);
+  st.due = now + st.interval * DAY_MS;
   st.reps = 1;
 }
 
@@ -345,10 +351,12 @@ function previewIntervals(cardId) {
   if (st.state === "relearning") {
     return { again: "<1m", hard: "<6m", good: "1d", easy: "1d" };
   }
-  // review
-  const hardIv = Math.max(1, Math.round(st.interval * 1.2));
-  const goodIv = Math.max(1, Math.round(st.interval * st.ef));
-  const easyIv = Math.max(1, Math.round(st.interval * st.ef * 1.3));
+  // review — clamp defensively so an already-corrupted stored interval (e.g. from
+  // before the MAX_INTERVAL_DAYS cap existed) still displays sanely right away
+  const curIv = clampInterval(st.interval);
+  const hardIv = clampInterval(curIv * 1.2);
+  const goodIv = clampInterval(curIv * st.ef);
+  const easyIv = clampInterval(curIv * st.ef * 1.3);
   return { again: "1d", hard: fmtDays(hardIv), good: fmtDays(goodIv), easy: fmtDays(easyIv) };
 }
 

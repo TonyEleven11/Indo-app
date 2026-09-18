@@ -4,6 +4,19 @@
 // Playful surface first, since that's what Tony wants to lean into early on.
 
 const SUGGESTED_PHRASES = [
+  // ---- For Sita ---- (phrases Tony asked to be added specifically for her)
+  { id: "s601", cat: "For Sita", id_text: "Selamat pagi, sayangku", en: "Good morning my love", note: "" },
+  { id: "s602", cat: "For Sita", id_text: "Selamat malam, sayangku", en: "Good night my love", note: "" },
+  { id: "s603", cat: "For Sita", id_text: "Hari ini indah banget", en: "What a beautiful day", note: "" },
+  { id: "s604", cat: "For Sita", id_text: "Kamu gila deh", en: "You're crazy", note: "Affectionate, not literal — said with a smile." },
+  { id: "s605", cat: "For Sita", id_text: "Dasar sok pintar!", en: "Smart arse", note: "Playful tease, closer to \"know-it-all\" than an insult." },
+  { id: "s606", cat: "For Sita", id_text: "Kamu cantik sekali", en: "You are so beautiful", note: "" },
+  { id: "s607", cat: "For Sita", id_text: "Aku harap kamu nggak pernah berubah", en: "I hope you never change", note: "" },
+  { id: "s608", cat: "For Sita", id_text: "Aku minta maaf, sayang", en: "I'm sorry", note: "" },
+  { id: "s609", cat: "For Sita", id_text: "Kamu bikin aku panas", en: "You're making me horny", note: "Colloquial and flirty — \"panas\" (hot) here means turned on, not literally warm. Save it for the right moment." },
+  { id: "s610", cat: "For Sita", id_text: "Kamu kelihatan manis hari ini", en: "You look lovely", note: "" },
+  { id: "s611", cat: "For Sita", id_text: "Kamu lapar?", en: "Are you hungry", note: "" },
+
   // ---- Romantic ----
   { id: "s301", cat: "Romantic", id_text: "Aku sayang kamu", en: "I care about you / I love you", note: "\"Sayang\" is the everyday, warm word for love — used constantly between couples." },
   { id: "s302", cat: "Romantic", id_text: "Aku cinta kamu", en: "I love you", note: "\"Cinta\" is a deeper, more deliberate word for love than \"sayang\"." },
@@ -423,6 +436,7 @@ const SUGGESTED_PHRASES = [
 // Category display order for the Suggestions tab — Romantic and Funny & Playful come first
 // since that's what Tony specifically wants to work through early on.
 const SUGGESTION_CATEGORY_ORDER = [
+  "For Sita",
   "Romantic",
   "Funny & Playful",
   "Meeting Her Family",
