@@ -166,6 +166,18 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
 
 .rating-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
 .rating-buttons.hidden { display: none; }
+
+.drill-badge {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+.drill-buttons { display: flex; gap: 8px; margin-top: 14px; }
+.drill-buttons.hidden { display: none; }
+.drill-buttons .btn-primary,
+.drill-buttons .btn-secondary { margin-top: 0; width: auto; flex: 1; }
 .rate-btn {
   border: none;
   border-radius: 12px;
@@ -234,7 +246,8 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
 .browse-text { min-width: 0; }
 .browse-id { font-weight: 600; }
 .browse-en { color: var(--text-muted); font-size: 0.9rem; }
-.browse-edit {
+.browse-actions { flex: none; display: flex; gap: 2px; }
+.browse-edit, .browse-drill {
   flex: none;
   background: none;
   border: none;

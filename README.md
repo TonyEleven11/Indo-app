@@ -45,6 +45,18 @@ A good number of the "Meeting Her Family" and casual-friend phrases lean into ev
 (gue/lo, and particles like *sih*, *dong*, *banget*) rather than textbook-formal Indonesian, since that's
 generally how people actually talk day to day.
 
+## Drilling one stuck phrase
+
+Sometimes a normal Study session interleaves other phrases in between reviews, which is by design (an
+immediate repeat isn't a real memory test) — but it makes it harder to hammer at one specific phrase you
+just aren't getting. For that, go to **Browse**, find the phrase, and tap **🔁** on its row (next to the
+✏️ edit button). It opens a focused loop of just that phrase: tap to reveal the answer, tap **🔁 Again**
+to reset and try it again, as many times in a row as you want. Tap **✅ Done drilling** whenever you're
+ready to stop.
+
+Drilling is separate from your real progress — it doesn't touch that phrase's schedule, ease, or Learned
+count, so you can hammer at it as much as you like without throwing off its normal review timing.
+
 ## Deploying to GitHub Pages
 
 Same pattern as your other apps (Tidy Clean Organized, HuntAI):

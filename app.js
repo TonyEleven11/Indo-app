@@ -99,6 +99,14 @@ let editingPhraseId = null; // set while the phrase form is editing an existing 
 let justLearnedCardId = null; // set for one rateCard() call when a card just crossed the Learned threshold
 let justUnlearnedCardId = null; // set for one rateCard() call when a learned card was just demoted
 
+// "Drill" state — a focused loop on ONE phrase (from Browse's 🔁 button), for when a specific
+// phrase needs a few extra reps in a row. Entirely separate from the real SM-2 schedule: it never
+// calls rateCard(), so it doesn't touch that phrase's interval, ease, reps, or Learned progress.
+let drillCardId = null;
+let drillCardDirection = "id->en";
+let drillFlipped = false;
+let drillRepCount = 0;
+
 // "Listen" auto-play state — see the Listen engine section below, near the Browse screen code.
 const ttsAvailable = "speechSynthesis" in window;
 let listenState = {
@@ -374,6 +382,7 @@ const screens = {
   browse: document.getElementById("screen-browse"),
   suggestions: document.getElementById("screen-suggestions"),
   settings: document.getElementById("screen-settings"),
+  drill: document.getElementById("screen-drill"),
 };
 
 function showScreen(name) {
@@ -435,6 +444,47 @@ function resolveDirection() {
     return Math.random() < 0.5 ? "id->en" : "en->id";
   }
   return settings.direction;
+}
+
+// ---- Drill (focused repeat of a single phrase) ----
+
+function startDrill(cardId) {
+  if (!byId[cardId]) return;
+  drillCardId = cardId;
+  drillCardDirection = resolveDirection(); // fixed for the whole drill, so reps stay consistent
+  drillRepCount = 0;
+  showScreen("drill");
+  renderDrillFront();
+}
+
+function renderDrillFront() {
+  drillFlipped = false;
+  drillRepCount += 1;
+  const p = byId[drillCardId];
+  document.getElementById("drill-front").textContent = drillCardDirection === "id->en" ? p.id_text : p.en;
+  document.getElementById("drill-back").classList.add("hidden");
+  document.getElementById("drill-tap-hint").classList.remove("hidden");
+  document.getElementById("drill-buttons").classList.add("hidden");
+  document.getElementById("drill-category").textContent = p.cat;
+  document.getElementById("drill-progress").textContent = `Rep ${drillRepCount} — not affecting your real progress`;
+}
+
+function flipDrillCard() {
+  if (drillFlipped) return;
+  drillFlipped = true;
+  const p = byId[drillCardId];
+  const back = drillCardDirection === "id->en" ? p.en : p.id_text;
+  document.getElementById("drill-back-text").textContent = back;
+  document.getElementById("drill-back-note").textContent = p.note || "";
+  document.getElementById("drill-back-note").classList.toggle("hidden", !p.note);
+  document.getElementById("drill-back").classList.remove("hidden");
+  document.getElementById("drill-tap-hint").classList.add("hidden");
+  document.getElementById("drill-buttons").classList.remove("hidden");
+}
+
+function endDrill() {
+  drillCardId = null;
+  showScreen("browse");
 }
 
 function nextCard() {
@@ -507,8 +557,8 @@ function showLearnedToast(message, kind) {
   showLearnedToast._t = setTimeout(() => toast.classList.remove("visible"), 2200);
 }
 
-function speakIndonesian() {
-  const p = byId[currentCardId];
+function speakIndonesian(id) {
+  const p = byId[id || currentCardId];
   if (!p || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
@@ -565,7 +615,10 @@ function renderBrowse(filterText) {
           <div class="browse-id">${escapeHtml(p.id_text)}</div>
           <div class="browse-en">${escapeHtml(p.en)}${badge}</div>
         </div>
-        <button class="browse-edit" data-id="${p.id}" aria-label="Edit">✏️</button>`;
+        <div class="browse-actions">
+          <button class="browse-drill" data-id="${p.id}" aria-label="Drill this phrase" title="Drill this phrase — repeat it a few times">🔁</button>
+          <button class="browse-edit" data-id="${p.id}" aria-label="Edit">✏️</button>
+        </div>`;
       container.appendChild(row);
     });
   });
@@ -1081,6 +1134,22 @@ function init() {
     handleRating("easy");
   });
 
+  document.getElementById("drill-card").addEventListener("click", (e) => {
+    if (!drillFlipped && !e.target.closest("#drill-buttons")) flipDrillCard();
+  });
+  document.getElementById("btn-drill-speak").addEventListener("click", (e) => {
+    e.stopPropagation();
+    speakIndonesian(drillCardId);
+  });
+  document.getElementById("btn-drill-again").addEventListener("click", (e) => {
+    e.stopPropagation();
+    renderDrillFront();
+  });
+  document.getElementById("btn-drill-done").addEventListener("click", (e) => {
+    e.stopPropagation();
+    endDrill();
+  });
+
   document.getElementById("browse-search").addEventListener("input", () => {
     stopListening(); // the filtered set just changed under it
     renderBrowse();
@@ -1103,8 +1172,10 @@ function init() {
     openPhraseForm(null);
   });
   document.getElementById("browse-list").addEventListener("click", (e) => {
-    const btn = e.target.closest(".browse-edit");
-    if (btn) openPhraseForm(btn.dataset.id);
+    const editBtn = e.target.closest(".browse-edit");
+    if (editBtn) { openPhraseForm(editBtn.dataset.id); return; }
+    const drillBtn = e.target.closest(".browse-drill");
+    if (drillBtn) startDrill(drillBtn.dataset.id);
   });
   document.getElementById("btn-save-phrase").addEventListener("click", savePhraseFromForm);
   document.getElementById("btn-cancel-phrase").addEventListener("click", closePhraseForm);

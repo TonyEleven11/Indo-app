@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Belajar ID" />
-<link rel="stylesheet" href="styles.css?v=9" />
+<link rel="stylesheet" href="styles.css?v=10" />
 </head>
 <body>
 
@@ -85,6 +85,32 @@
       <p class="celebrate">🎉 Session complete!</p>
       <p class="hint">There's no limit — jump right back in whenever you want.</p>
       <button id="btn-study-again" class="btn-primary">Study more</button>
+    </div>
+  </section>
+
+  <!-- DRILL (focused repeat of a single phrase, launched from a Browse row's 🔁 button) -->
+  <section id="screen-drill" class="screen">
+    <div class="drill-badge">🔁 Drilling one phrase</div>
+    <div id="drill-progress" class="study-progress"></div>
+
+    <div id="drill-card" class="flashcard">
+      <div class="card-category" id="drill-category"></div>
+      <div class="card-front" id="drill-front"></div>
+
+      <div id="drill-back" class="card-back hidden">
+        <div class="card-divider"></div>
+        <div id="drill-back-text" class="card-back-text"></div>
+        <div id="drill-back-note" class="card-back-note hidden"></div>
+      </div>
+
+      <button id="btn-drill-speak" class="btn-speak" title="Play pronunciation" aria-label="Play pronunciation">🔊</button>
+
+      <div id="drill-tap-hint" class="tap-hint">Tap card to reveal</div>
+    </div>
+
+    <div id="drill-buttons" class="drill-buttons hidden">
+      <button id="btn-drill-again" class="btn-primary btn-large">🔁 Again</button>
+      <button id="btn-drill-done" class="btn-secondary btn-large">✅ Done drilling</button>
     </div>
   </section>
 
@@ -203,6 +229,6 @@
 </nav>
 
 <script src="suggestions-data.js?v=2"></script>
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>
