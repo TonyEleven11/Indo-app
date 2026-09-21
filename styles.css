@@ -72,6 +72,19 @@ main { max-width: 480px; margin: 0 auto; padding: 18px 16px 8px 16px; }
 .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--red); }
 .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
 
+.target-status {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.target-status.hidden { display: none; }
+.target-status.target-ontrack { background: rgba(46, 158, 85, 0.12); color: var(--green); }
+.target-status.target-ahead { background: rgba(47, 111, 176, 0.12); color: var(--blue); }
+.target-status.target-behind { background: rgba(217, 138, 31, 0.12); color: var(--amber); }
+
 .btn-primary {
   display: block;
   width: 100%;

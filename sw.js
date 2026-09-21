@@ -1,6 +1,6 @@
 // Bump CACHE_NAME whenever app files change so users get the update
 // instead of a stale cached version (see /README.md troubleshooting note).
-const CACHE_NAME = "belajar-indonesia-v12";
+const CACHE_NAME = "belajar-indonesia-v13";
 const ASSETS = [
   "./",
   "./index.html",

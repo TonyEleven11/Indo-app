@@ -45,6 +45,19 @@ A good number of the "Meeting Her Family" and casual-friend phrases lean into ev
 (gue/lo, and particles like *sih*, *dong*, *banget*) rather than textbook-formal Indonesian, since that's
 generally how people actually talk day to day.
 
+## Staying on track
+
+Home shows a status line under the 4 stat boxes telling you whether you're keeping pace with adding new
+phrases — e.g. "✅ On track — 12 of 12 phrases added (2/day target)" or "⚠️ 3 behind pace — add 3 more to
+catch up." It counts any phrase you add, however you add it (typed into Browse, or tapped ➕ in Ideas),
+and it's cumulative from the day this feature first showed up in your app — so if you skip a few days,
+the shortfall carries over rather than resetting each morning. The daily target starts at 2 but is
+yours to change any time in **Settings → Daily phrase target**.
+
+Since there's no way to know exactly when phrases you'd already added before this feature existed were
+really added, they don't count toward the target one way or the other — tracking simply starts from
+here, going forward.
+
 ## Drilling one stuck phrase
 
 Sometimes a normal Study session interleaves other phrases in between reviews, which is by design (an

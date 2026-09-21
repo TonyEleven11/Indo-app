@@ -12,6 +12,9 @@ const EASY_TO_LEARN = 5; // rate a card "Easy" this many times (cumulative) to m
 const DEFAULT_SETTINGS = {
   direction: "mixed", // 'id->en' | 'en->id' | 'mixed'
   categories: null, // null = all categories
+  dailyTarget: 2, // "on track" target: phrases added per day, adjustable in Settings
+  trackingStartDate: null, // "YYYY-MM-DD" — set once, the first time the target tracker runs;
+  // existing phrases added before that date have no addedAt and simply don't count toward it
 };
 
 // ---------- Persistence ----------
@@ -156,6 +159,7 @@ function addPhrase({ cat, id_text, en, note }) {
     id_text: id_text.trim(),
     en: en.trim(),
     note: (note || "").trim(),
+    addedAt: Date.now(), // powers the "on track" target tracker on Home — see computeTargetProgress()
   };
   phrases.push(p);
   savePhrases(phrases);
@@ -192,6 +196,44 @@ function activeCategories() {
 }
 
 // ---------- Stats ----------
+
+// ---- "On track" phrase-adding target ----
+// Cumulative, like a savings goal: target-to-date = dailyTarget × days since tracking started.
+// Tracking starts the day this feature first runs (existing phrases have no addedAt and simply
+// don't count) since there's no way to know when phrases added before that were really added.
+
+function todayDateString() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function ensureTrackingStart() {
+  if (!settings.trackingStartDate) {
+    settings.trackingStartDate = todayDateString();
+    saveSettings(settings);
+  }
+}
+
+function daysSinceTrackingStart() {
+  if (!settings.trackingStartDate) return 1;
+  const [y, m, d] = settings.trackingStartDate.split("-").map(Number);
+  const start = new Date(y, m - 1, d);
+  const now = new Date();
+  const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffDays = Math.round((nowMidnight - start) / DAY_MS);
+  return Math.max(1, diffDays + 1); // inclusive of today
+}
+
+function computeTargetProgress() {
+  const dailyTarget = settings.dailyTarget || DEFAULT_SETTINGS.dailyTarget;
+  const daysElapsed = daysSinceTrackingStart();
+  const targetToDate = dailyTarget * daysElapsed;
+  const actual = phrases.filter((p) => p.addedAt != null).length;
+  return { dailyTarget, daysElapsed, targetToDate, actual, diff: actual - targetToDate };
+}
 
 // No daily cap on new cards and no hard stop once you're "caught up" — this is a small,
 // self-curated deck, not a huge shared one, and there's no reason to throttle how much
@@ -420,6 +462,28 @@ function renderHome() {
     startBtn.disabled = false; // never blocked — nothing formally due just means free-practice mode
     startBtn.textContent =
       totalToStudy === 0 ? `Practice again (${stats.total})` : `Study now (${totalToStudy})`;
+  }
+
+  renderTargetStatus();
+}
+
+function renderTargetStatus() {
+  const el = document.getElementById("target-status");
+  if (phrases.length === 0) {
+    el.classList.add("hidden");
+    return;
+  }
+  const { dailyTarget, targetToDate, actual, diff } = computeTargetProgress();
+  el.classList.remove("hidden", "target-ontrack", "target-ahead", "target-behind");
+  if (diff > 0) {
+    el.textContent = `🚀 ${diff} ahead of pace — ${actual} of ${targetToDate} phrases added (${dailyTarget}/day target)`;
+    el.classList.add("target-ahead");
+  } else if (diff === 0) {
+    el.textContent = `✅ On track — ${actual} of ${targetToDate} phrases added (${dailyTarget}/day target)`;
+    el.classList.add("target-ontrack");
+  } else {
+    el.textContent = `⚠️ ${-diff} behind pace — add ${-diff} more to catch up (${dailyTarget}/day target)`;
+    el.classList.add("target-behind");
   }
 }
 
@@ -962,6 +1026,7 @@ function addSuggestedPhrase(bankId) {
 
 function renderSettings() {
   document.getElementById("setting-direction").value = settings.direction;
+  document.getElementById("setting-daily-target").value = settings.dailyTarget;
   const catContainer = document.getElementById("setting-categories");
   catContainer.innerHTML = "";
   const active = activeCategories();
@@ -980,6 +1045,8 @@ function renderSettings() {
 // requirement: switching screens without tapping it still keeps whatever you last touched.
 function saveSettingsFromForm(showConfirmation) {
   settings.direction = document.getElementById("setting-direction").value;
+  const dailyTargetRaw = parseInt(document.getElementById("setting-daily-target").value, 10);
+  settings.dailyTarget = Number.isFinite(dailyTargetRaw) && dailyTargetRaw > 0 ? dailyTargetRaw : DEFAULT_SETTINGS.dailyTarget;
   const checked = Array.from(document.querySelectorAll("#setting-categories input:checked")).map((cb) =>
     cb.parentElement.textContent.trim()
   );
@@ -998,7 +1065,9 @@ function resetAllProgress() {
   if (!confirm("Reset all study progress? This cannot be undone.")) return;
   cardStates = {};
   ensureAllCardsExist();
-  settings = { ...DEFAULT_SETTINGS };
+  // Keep the daily-target tracker's own settings intact — "reset progress" means SRS scheduling,
+  // not your target pace or its start date (which phrases already have addedAt is untouched too).
+  settings = { ...DEFAULT_SETTINGS, trackingStartDate: settings.trackingStartDate, dailyTarget: settings.dailyTarget };
   saveSettings(settings);
   renderHome();
 }
@@ -1060,6 +1129,7 @@ function importPhrasesFromFile(file) {
       id_text: (p.id_text || "").trim(),
       en: (p.en || "").trim(),
       note: (p.note || "").trim(),
+      ...(p.addedAt != null ? { addedAt: p.addedAt } : {}), // preserve target-tracker history, if any
     }));
     savePhrases(phrases);
     rebuildIndex();
@@ -1072,6 +1142,7 @@ function importPhrasesFromFile(file) {
       settings = { ...DEFAULT_SETTINGS, ...data.settings };
       saveSettings(settings);
     }
+    ensureTrackingStart(); // backups from before this feature existed won't have a start date yet
 
     renderHome();
     renderBrowse();
@@ -1095,6 +1166,7 @@ function showBackupStatus(text) {
 
 function init() {
   ensureAllCardsExist();
+  ensureTrackingStart();
 
   document.querySelectorAll(".navbtn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1200,6 +1272,7 @@ function init() {
   });
   document.getElementById("btn-reset-progress").addEventListener("click", resetAllProgress);
   document.getElementById("setting-direction").addEventListener("change", () => saveSettingsFromForm(false));
+  document.getElementById("setting-daily-target").addEventListener("change", () => saveSettingsFromForm(false));
   // Event delegation: category checkboxes are rebuilt each time renderSettings() runs,
   // so listen on their stable container rather than re-binding after every render.
   document.getElementById("setting-categories").addEventListener("change", (e) => {

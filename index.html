@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Belajar ID" />
-<link rel="stylesheet" href="styles.css?v=10" />
+<link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
 
@@ -43,6 +43,8 @@
         <div class="stat-label">Total phrases</div>
       </div>
     </div>
+
+    <div id="target-status" class="target-status hidden"></div>
 
     <button id="btn-start-study" class="btn-primary btn-large">Study now</button>
 
@@ -190,6 +192,13 @@
       </select>
     </label>
 
+    <label class="field">
+      Daily phrase target
+      <input type="number" id="setting-daily-target" min="1" max="50" step="1" />
+    </label>
+    <p class="hint small">Used by the "on track" status on Home to show whether you're keeping pace with
+      adding new phrases to your deck.</p>
+
     <div class="field">
       Categories to study
       <div id="setting-categories" class="cat-checks"></div>
@@ -229,6 +238,6 @@
 </nav>
 
 <script src="suggestions-data.js?v=2"></script>
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>
